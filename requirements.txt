@@ -1,0 +1,28 @@
+## Core
+python-dotenv==1.0.1
+
+## Face detection / recognition
+deepface==0.0.93
+opencv-python==4.10.0.84
+tensorflow==2.17.0
+
+## Web / social search
+google-search-results==2.4.2   # SerpApi client
+requests==2.32.3
+
+## Blockchain
+web3==7.2.0
+py-solc-x==2.0.3
+
+## IPFS storage
+requests-toolbelt==1.0.0       # used for Pinata multipart uploads
+
+## Certificate generation
+qrcode[pil]==8.0
+Pillow==10.4.0
+
+## UI
+streamlit==1.38.0
+
+## Testing
+pytest==8.3.3
