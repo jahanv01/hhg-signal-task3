@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from src.blockchain.chain_client import ChainClient, ChainClientError
 from src.blockchain.hasher import hash_bundle, hash_bundle_hex
+from src.certificate.generate import generate_certificate
 from src.pipeline import STAGE_ORDER, run_pipeline
 
 STAGE_LABELS = {
@@ -171,6 +172,26 @@ def render_results(result):
             unsafe_allow_html=True,
         )
 
+    st.markdown("#### Certificate")
+    query_image_path = st.session_state.get("query_image_path")
+    cert_path = os.path.join(tempfile.gettempdir(), f"hhg_certificate_{result.record_id}.png")
+    if not os.path.exists(cert_path):
+        generate_certificate(
+            evidence_bundle=result.evidence_bundle,
+            explorer_url=result.explorer_url,
+            record_id=result.record_id,
+            ipfs_cid=result.ipfs_cid,
+            output_path=cert_path,
+            query_image_path=query_image_path,
+        )
+    with open(cert_path, "rb") as f:
+        st.download_button(
+            "⬇ Download Verification Certificate",
+            data=f.read(),
+            file_name=f"hhg_verification_certificate_{result.record_id}.png",
+            mime="image/png",
+        )
+
 
 def main():
     inject_theme()
@@ -210,7 +231,7 @@ def main():
 
         result = run_pipeline(tmp_path, on_stage_start=on_start, on_stage_end=on_end)
         st.session_state.result = result
-        os.unlink(tmp_path)
+        st.session_state.query_image_path = tmp_path  # kept for certificate generation
 
     if st.session_state.result is not None:
         render_results(st.session_state.result)
