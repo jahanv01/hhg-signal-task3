@@ -40,9 +40,9 @@ def inject_theme():
             <div class="floater floater-1">🌴</div>
             <div class="floater floater-2">🌺</div>
             <div class="floater floater-3">🌴</div>
-            <div class="floater floater-4">🌺</div>
-            <div class="floater floater-5">🧭</div>
-            <div class="floater floater-6">✨</div>
+            <div class="floater floater-4">🌊</div>
+            <div class="floater floater-5">🏖️</div>
+            <div class="floater floater-6">⛵</div>
         </div>
         <div class="hhg-wave-line"></div>
         """,
