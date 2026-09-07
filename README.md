@@ -23,7 +23,7 @@ flowchart TD
         E --> F{"Any results on a\nknown social domain?"}
     end
 
-    F -- "No" --> N1["❌ Report:\nNo genuine social\nmedia post found"]
+    F -- "No" --> N1["Report:\nNo genuine social\nmedia post found"]
     F -- "Yes" --> G
 
     subgraph S3["3 · Match Verification (differentiator)"]
@@ -32,14 +32,14 @@ flowchart TD
         I --> J{"Genuine face match\nabove threshold?"}
     end
 
-    J -- "No" --> N2["❌ Report:\nNo confident\nface match"]
+    J -- "No" --> N2["Report:\nNo confident\nface match"]
     J -- "Yes" --> K["📦 Build evidence bundle\n(matched URL + confidence\n+ image hash + timestamp)"]
 
     subgraph S4["4 · Blockchain Verification"]
         K --> L["Pin full bundle to IPFS\n(Pinata) → CID"]
         L --> M["sha256(bundle) → bytes32"]
         M --> O["registerRecord(hash, CID)\non Polygon Amoy"]
-        O --> P["✅ Re-verify:\nread record back,\nrecompute hash, compare"]
+        O --> P["Re-verify:\nread record back,\nrecompute hash, compare"]
     end
 
     P --> Q[["🏆 Result: matched post +\non-chain tx + certificate"]]
