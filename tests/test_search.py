@@ -1,10 +1,21 @@
 import os
 
+import pytest
+
 from src.search import cache
 from src.search.serpapi_client import filter_social_candidates, reverse_image_search
 
 SAMPLE_DIR = os.path.join(os.path.dirname(__file__), "sample_images")
 FACE_IMAGE = os.path.join(SAMPLE_DIR, "test1.jpg")
+
+
+@pytest.fixture(autouse=True)
+def isolated_cache_dir(tmp_path, monkeypatch):
+    """Point the search cache at a throwaway directory for every test in
+    this module, so seeding fixtures here never overwrites the real
+    dev/app cache at data/serpapi_cache/ (which happened before this fix
+    and silently broke a real cached SerpApi response)."""
+    monkeypatch.setattr(cache, "CACHE_DIR", str(tmp_path))
 
 FIXTURE_RESPONSE = {
     "visual_matches": [

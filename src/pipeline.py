@@ -6,6 +6,7 @@ Used by both the CLI and the Streamlit app so the two never drift.
 import datetime
 import hashlib
 from dataclasses import dataclass, field
+from typing import Callable
 
 from src.blockchain.chain_client import ChainClient, ChainClientError
 from src.blockchain.hasher import hash_bundle, hash_bundle_hex
@@ -14,6 +15,15 @@ from src.face.encoder import encode_face
 from src.search.matcher import VerifiedMatch, best_match, verify_candidates
 from src.search.serpapi_client import SearchError, filter_social_candidates, reverse_image_search
 from src.storage.ipfs_client import IpfsError, pin_json
+
+STAGE_ORDER = [
+    "face_identification",
+    "web_search",
+    "match_verification",
+    "ipfs_storage",
+    "blockchain_registration",
+    "re_verification",
+]
 
 
 @dataclass
@@ -42,44 +52,59 @@ def _sha256_file(path: str) -> str:
         return hashlib.sha256(f.read()).hexdigest()
 
 
-def run_pipeline(image_path: str) -> PipelineResult:
+def run_pipeline(
+    image_path: str,
+    on_stage_start: Callable[[str], None] = lambda name: None,
+    on_stage_end: Callable[[StageResult], None] = lambda stage: None,
+) -> PipelineResult:
+    """Run the full pipeline. Optional callbacks let a caller (e.g. the
+    Streamlit UI) render live per-stage progress instead of only seeing
+    the final result.
+    """
     result = PipelineResult()
 
+    def finish(stage: StageResult):
+        result.stages.append(stage)
+        on_stage_end(stage)
+
     # Stage 1: face identification
+    on_stage_start("face_identification")
     try:
         face = detect_primary_face(image_path)
         query_embedding = encode_face(face.crop).vector
-        result.stages.append(StageResult(
+        finish(StageResult(
             "face_identification", "success",
             f"Face detected (confidence {face.confidence:.2f})",
         ))
     except NoFaceFoundError as e:
-        result.stages.append(StageResult("face_identification", "failed", str(e)))
+        finish(StageResult("face_identification", "failed", str(e)))
         return result
 
     # Stage 2: web/social search
+    on_stage_start("web_search")
     try:
         candidates = reverse_image_search(image_path)
         social_candidates = filter_social_candidates(candidates)
-        result.stages.append(StageResult(
+        finish(StageResult(
             "web_search", "success",
             f"{len(candidates)} visual matches found ({len(social_candidates)} on known social domains)",
         ))
     except SearchError as e:
-        result.stages.append(StageResult("web_search", "failed", str(e)))
+        finish(StageResult("web_search", "failed", str(e)))
         return result
 
     # Stage 2b: two-layer match verification (the differentiator)
+    on_stage_start("match_verification")
     verified = verify_candidates(query_embedding, social_candidates)
     match = best_match(verified)
     if match is None:
-        result.stages.append(StageResult(
+        finish(StageResult(
             "match_verification", "failed",
             "No candidate's face matched the query above the confidence threshold",
         ))
         return result
     result.best_match = match
-    result.stages.append(StageResult(
+    finish(StageResult(
         "match_verification", "success",
         f"Best match: {match.candidate.link} (confidence {match.confidence:.2f})",
     ))
@@ -98,15 +123,17 @@ def run_pipeline(image_path: str) -> PipelineResult:
     result.data_hash_hex = hash_bundle_hex(bundle)
 
     # Stage 3a: pin full bundle to IPFS
+    on_stage_start("ipfs_storage")
     try:
         cid = pin_json(bundle, name="hhg-signal-task3-evidence")
         result.ipfs_cid = cid
-        result.stages.append(StageResult("ipfs_storage", "success", f"Pinned to IPFS: {cid}"))
+        finish(StageResult("ipfs_storage", "success", f"Pinned to IPFS: {cid}"))
     except IpfsError as e:
-        result.stages.append(StageResult("ipfs_storage", "failed", str(e)))
+        finish(StageResult("ipfs_storage", "failed", str(e)))
         return result
 
     # Stage 3b: register hash + CID on-chain
+    on_stage_start("blockchain_registration")
     data_hash = hash_bundle(bundle)
     try:
         client = ChainClient()
@@ -114,18 +141,19 @@ def run_pipeline(image_path: str) -> PipelineResult:
         result.tx_hash = submitted.tx_hash
         result.explorer_url = submitted.explorer_url
         result.record_id = submitted.record_id
-        result.stages.append(StageResult(
+        finish(StageResult(
             "blockchain_registration", "success",
             f"Record #{submitted.record_id} registered on Polygon Amoy",
         ))
     except ChainClientError as e:
-        result.stages.append(StageResult("blockchain_registration", "failed", str(e)))
+        finish(StageResult("blockchain_registration", "failed", str(e)))
         return result
 
     # Stage 4: re-verification (read back on-chain, recompute locally, compare)
+    on_stage_start("re_verification")
     reverify_ok = client.verify_hash(submitted.record_id, data_hash)
     result.reverify_ok = reverify_ok
-    result.stages.append(StageResult(
+    finish(StageResult(
         "re_verification",
         "success" if reverify_ok else "failed",
         f"Recomputed hash {'matches' if reverify_ok else 'does NOT match'} the on-chain record",
