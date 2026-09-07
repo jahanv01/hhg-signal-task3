@@ -6,17 +6,71 @@ A pipeline that takes a face scan, finds a genuinely matching social media
 post via a real reverse-image search, and writes a tamper-evident record of
 that discovery to a public blockchain — with live re-verification.
 
+## System architecture
+
+```mermaid
+flowchart TD
+    A[["📷 Face scan\n(uploaded photo)"]] --> B
+
+    subgraph S1["1 · Face Identification"]
+        B["Detect face\n(OpenCV / DeepFace)"] --> C["Encode face\n512-d ArcFace embedding"]
+    end
+
+    C --> D
+
+    subgraph S2["2 · Web / Social Search"]
+        D["Upload image to SerpApi"] --> E["Google Lens\nreverse image search"]
+        E --> F{"Any results on a\nknown social domain?"}
+    end
+
+    F -- "No" --> N1["❌ Report:\nNo genuine social\nmedia post found"]
+    F -- "Yes" --> G
+
+    subgraph S3["3 · Match Verification (differentiator)"]
+        G["Download each\ncandidate's image"] --> H["Re-run face encoding\non every candidate"]
+        H --> I["Compare embeddings\n(cosine distance)"]
+        I --> J{"Genuine face match\nabove threshold?"}
+    end
+
+    J -- "No" --> N2["❌ Report:\nNo confident\nface match"]
+    J -- "Yes" --> K["📦 Build evidence bundle\n(matched URL + confidence\n+ image hash + timestamp)"]
+
+    subgraph S4["4 · Blockchain Verification"]
+        K --> L["Pin full bundle to IPFS\n(Pinata) → CID"]
+        L --> M["sha256(bundle) → bytes32"]
+        M --> O["registerRecord(hash, CID)\non Polygon Amoy"]
+        O --> P["✅ Re-verify:\nread record back,\nrecompute hash, compare"]
+    end
+
+    P --> Q[["🏆 Result: matched post +\non-chain tx + certificate"]]
+
+    style A fill:#F5C518,stroke:#14532D,color:#12331F
+    style Q fill:#F5C518,stroke:#14532D,color:#12331F
+    style N1 fill:#E0447F,stroke:#0B3D22,color:#fff
+    style N2 fill:#E0447F,stroke:#0B3D22,color:#fff
 ```
-Face scan → Face detection & encoding (DeepFace/ArcFace)
-          → Reverse image search (SerpApi Google Lens)
-          → Two-layer match verification (re-run face recognition on each
-            candidate post's image to confirm it's genuinely the same face,
-            not just a visually similar picture)
-          → Evidence bundle → pinned to IPFS (Pinata)
-          → Hash + IPFS CID registered on Polygon Amoy (smart contract)
-          → Re-verification: recompute hash locally, compare to on-chain
-            record (and a live "tamper test" to prove mismatches are caught)
-```
+
+**Plain-language walkthrough:**
+
+1. **You upload a face photo.** The app detects the face and turns it into a
+   512-number "fingerprint" (embedding) using ArcFace — this fingerprint is
+   what gets compared later, not the raw photo.
+2. **The photo is searched on the web** via Google Lens (through SerpApi),
+   which returns pages that visually contain a similar image.
+3. **Every candidate result is double-checked.** Instead of trusting "looks
+   similar," the app downloads each candidate's image, runs the same face
+   fingerprinting on it, and only keeps candidates whose fingerprint is
+   close enough to the original to be confidently the same person, *and*
+   whose link is on an actual social media platform.
+4. **The evidence is packaged and stored.** The winning match (URL,
+   confidence score, image hash, timestamp) is saved as a small JSON
+   "evidence bundle," pinned to IPFS (permanent, content-addressed
+   storage), and only that bundle's cryptographic hash + its IPFS location
+   are written to a smart contract on the Polygon Amoy blockchain.
+5. **Anyone can re-verify, forever.** Because the hash is on a public
+   blockchain, you (or a judge, or anyone) can re-fetch the evidence,
+   recompute its hash, and compare it to the on-chain value at any time —
+   if even one byte of the evidence changed, the hashes won't match.
 
 ## What makes this different from "call an API, call a blockchain"
 
