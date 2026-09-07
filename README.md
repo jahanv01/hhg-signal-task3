@@ -142,9 +142,11 @@ gracefully if unreachable.
   resolve in our development environment's DNS; `config.py` defaults to
   `polygon-amoy-bor-rpc.publicnode.com` instead. If that endpoint is ever
   degraded, swap `AMOY_RPC_URL` in `.env` for another public Amoy RPC.
-- **Google Lens requires a public image URL.** The query image is
-  temporarily pinned to IPFS via Pinata to obtain one; this adds a small
-  amount of latency and a dependency on Pinata's uptime.
+- **Query image size cap for search.** SerpApi's image-upload endpoint caps
+  uploads at 500KB, so `serpapi_client.py` re-encodes/downscales the query
+  image before searching. This only affects the search step's copy of the
+  image, not face detection accuracy (which runs on the original) or the
+  evidence bundle (which stores a hash of the original file).
 - **Face matching threshold is fixed** (`FACE_MATCH_DISTANCE_THRESHOLD` in
   `src/config.py`, ArcFace cosine distance ≤ 0.68). It was tuned against a
   handful of real test images, not a large validation set.
