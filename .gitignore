@@ -147,6 +147,12 @@ activemq-data/
 # SageMath parsed files
 *.sage.py
 
+# Project-local generated data (keep .gitkeep placeholders)
+data/serpapi_cache/*
+!data/serpapi_cache/.gitkeep
+data/evidence_bundles/*
+!data/evidence_bundles/.gitkeep
+
 # Environments
 .env
 .envrc
