@@ -1,4 +1,4 @@
-# HH Signal — Face Identification & Blockchain Verification
+# HH Signal — Face Identification & Blockchain Verification — Team:HackWave
 
 Built for **HH Goa 2026, Shortlisting Task 3**.
 
