@@ -13,7 +13,7 @@ from src.blockchain.hasher import hash_bundle, hash_bundle_hex
 from src.face.detector import NoFaceFoundError, detect_primary_face
 from src.face.encoder import encode_face
 from src.search.matcher import VerifiedMatch, best_match, verify_candidates
-from src.search.serpapi_client import SearchError, filter_social_candidates, reverse_image_search
+from src.search.serpapi_client import SearchError, reverse_image_search, social_only_candidates
 from src.storage.ipfs_client import IpfsError, pin_json
 
 STAGE_ORDER = [
@@ -84,7 +84,7 @@ def run_pipeline(
     on_stage_start("web_search")
     try:
         candidates = reverse_image_search(image_path)
-        social_candidates = filter_social_candidates(candidates)
+        social_candidates = social_only_candidates(candidates)
         finish(StageResult(
             "web_search", "success",
             f"{len(candidates)} visual matches found ({len(social_candidates)} on known social domains)",
@@ -95,12 +95,18 @@ def run_pipeline(
 
     # Stage 2b: two-layer match verification (the differentiator)
     on_stage_start("match_verification")
+    if not social_candidates:
+        finish(StageResult(
+            "match_verification", "failed",
+            "No genuine social media post found among search results (task requires a social media match, not just any webpage)",
+        ))
+        return result
     verified = verify_candidates(query_embedding, social_candidates)
     match = best_match(verified)
     if match is None:
         finish(StageResult(
             "match_verification", "failed",
-            "No candidate's face matched the query above the confidence threshold",
+            "Found social media posts visually similar to this face, but none passed the face-match confidence threshold",
         ))
         return result
     result.best_match = match

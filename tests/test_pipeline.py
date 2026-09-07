@@ -32,7 +32,7 @@ def test_pipeline_stops_early_when_no_genuine_match():
     with patch.object(pipeline, "detect_primary_face", return_value=fake_face), \
          patch.object(pipeline, "encode_face", return_value=fake_embedding), \
          patch.object(pipeline, "reverse_image_search", return_value=[candidate]), \
-         patch.object(pipeline, "filter_social_candidates", return_value=[candidate]), \
+         patch.object(pipeline, "social_only_candidates", return_value=[candidate]), \
          patch.object(pipeline, "verify_candidates", return_value=[]), \
          patch.object(pipeline, "best_match", return_value=None):
         result = pipeline.run_pipeline("irrelevant.jpg")
@@ -57,7 +57,7 @@ def test_pipeline_full_success_path_registers_and_reverifies():
     with patch.object(pipeline, "detect_primary_face", return_value=fake_face), \
          patch.object(pipeline, "encode_face", return_value=fake_embedding), \
          patch.object(pipeline, "reverse_image_search", return_value=[candidate]), \
-         patch.object(pipeline, "filter_social_candidates", return_value=[candidate]), \
+         patch.object(pipeline, "social_only_candidates", return_value=[candidate]), \
          patch.object(pipeline, "verify_candidates", return_value=[match]), \
          patch.object(pipeline, "best_match", return_value=match), \
          patch.object(pipeline, "_sha256_file", return_value="deadbeef"), \

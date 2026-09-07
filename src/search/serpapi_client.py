@@ -86,6 +86,17 @@ def reverse_image_search(image_path: str, use_cache: bool = True) -> list[Search
 
 
 def filter_social_candidates(candidates: list[SearchCandidate]) -> list[SearchCandidate]:
-    """Prefer known social-media domains; fall back to all candidates if none match."""
+    """Prefer known social-media domains; fall back to all candidates if none match.
+
+    General-purpose utility -- for the strict "must actually be a social media
+    post" requirement the pipeline enforces, see social_only_candidates().
+    """
     social = [c for c in candidates if any(domain in c.link for domain in SOCIAL_DOMAINS)]
     return social if social else candidates
+
+
+def social_only_candidates(candidates: list[SearchCandidate]) -> list[SearchCandidate]:
+    """Strictly known social-media domains only, no fallback. The task
+    requires the final matched result to genuinely be a social media post,
+    not just any visually-similar webpage."""
+    return [c for c in candidates if any(domain in c.link for domain in SOCIAL_DOMAINS)]
