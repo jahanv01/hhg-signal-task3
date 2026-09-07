@@ -1,32 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 :root {
-    --bg: #0B1220;
-    --bg-elevated: #101a2e;
-    --bg-glass: rgba(16, 26, 46, 0.62);
-    --teal: #14B8A6;
-    --gold: #F59E0B;
-    --sand: #F5F0E6;
-    --dim: #90a0bd;
-    --border: rgba(245, 240, 230, 0.10);
-    --success: #14B8A6;
-    --fail: #F87171;
-    --pending: #3b465e;
+    --cream: #FDF6E7;
+    --cream-deep: #F7EAD1;
+    --card: #FFFFFF;
+    --forest: #14532D;
+    --forest-deep: #0B3D22;
+    --pink: #E0447F;
+    --pink-deep: #C22665;
+    --yellow: #F5C518;
+    --yellow-deep: #E0AC00;
+    --text: #12331F;
+    --dim: #5B7566;
+    --border: rgba(20, 83, 45, 0.14);
+    --success: #14532D;
+    --fail: #D6336C;
+    --pending: #C9C0A6;
 }
 
 /* ---------- base ---------- */
 html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
-    background: var(--bg) !important;
-    color: var(--sand) !important;
+    background: var(--cream) !important;
+    color: var(--text) !important;
     font-family: 'Space Grotesk', sans-serif;
 }
 
 [data-testid="stAppViewContainer"] {
     background:
-        radial-gradient(ellipse 900px 500px at 12% -8%, rgba(20, 184, 166, 0.16), transparent 60%),
-        radial-gradient(ellipse 800px 500px at 100% 10%, rgba(245, 158, 11, 0.10), transparent 55%),
-        radial-gradient(ellipse 1000px 700px at 50% 120%, rgba(20, 184, 166, 0.08), transparent 60%),
-        var(--bg) !important;
+        radial-gradient(ellipse 700px 420px at 8% -6%, rgba(20, 83, 45, 0.10), transparent 55%),
+        radial-gradient(ellipse 700px 420px at 100% 6%, rgba(224, 68, 127, 0.10), transparent 55%),
+        radial-gradient(ellipse 900px 600px at 50% 115%, rgba(245, 197, 24, 0.14), transparent 60%),
+        var(--cream) !important;
     background-attachment: fixed !important;
 }
 
@@ -35,24 +39,34 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
 #MainMenu, footer { visibility: hidden; }
 
 ::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 8px; opacity: .6; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--pink); border-radius: 8px; opacity: .6; }
+
+/* ---------- roof-tile stripe banner ---------- */
+.hhg-roofline {
+    position: fixed; top: 0; left: 0; right: 0; height: 10px; z-index: 2;
+    background: repeating-linear-gradient(
+        -45deg,
+        var(--forest) 0px, var(--forest) 22px,
+        var(--pink) 22px, var(--pink) 44px,
+        var(--yellow) 44px, var(--yellow) 66px
+    );
+}
 
 /* ---------- floating decorative layer ---------- */
 .hhg-floaters { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
 .floater {
     position: absolute;
-    opacity: 0.16;
-    filter: drop-shadow(0 0 12px rgba(20,184,166,0.25));
+    opacity: 0.30;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
 }
 .floater-1 { top: 8%;  left: 4%;  font-size: 64px; animation: drift-a 14s infinite ease-in-out; }
-.floater-2 { top: 65%; left: 2%;  font-size: 44px; animation: drift-b 18s infinite ease-in-out; opacity: 0.12;}
-.floater-3 { top: 15%; right: 6%; font-size: 52px; animation: drift-c 16s infinite ease-in-out; opacity: 0.14;}
-.floater-4 { top: 78%; right: 8%; font-size: 40px; animation: drift-a 20s infinite ease-in-out; opacity: 0.10;}
-.floater-5 { top: 42%; left: 48%; font-size: 30px; animation: drift-b 22s infinite ease-in-out; opacity: 0.08;}
-.floater-6 { top: 4%;  left: 40%; font-size: 26px; animation: drift-c 12s infinite ease-in-out; opacity: 0.10;}
+.floater-2 { top: 65%; left: 2%;  font-size: 44px; animation: drift-b 18s infinite ease-in-out; opacity: 0.22;}
+.floater-3 { top: 15%; right: 6%; font-size: 52px; animation: drift-c 16s infinite ease-in-out; opacity: 0.26;}
+.floater-4 { top: 78%; right: 8%; font-size: 40px; animation: drift-a 20s infinite ease-in-out; opacity: 0.18;}
+.floater-5 { top: 42%; left: 48%; font-size: 30px; animation: drift-b 22s infinite ease-in-out; opacity: 0.14;}
+.floater-6 { top: 4%;  left: 40%; font-size: 26px; animation: drift-c 12s infinite ease-in-out; opacity: 0.20;}
 
 @keyframes drift-a {
     0%, 100% { transform: translateY(0) rotate(0deg); }
@@ -69,96 +83,112 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
 
 .hhg-wave-line {
     position: fixed; left: 0; right: 0; bottom: 0; height: 140px;
-    background: linear-gradient(180deg, transparent, rgba(20,184,166,0.06));
+    background: linear-gradient(180deg, transparent, rgba(20,83,45,0.06));
     z-index: 0; pointer-events: none;
 }
 
 /* ---------- header ---------- */
-.hhg-header { position: relative; z-index: 1; text-align: center; padding: 18px 0 6px 0; }
+.hhg-header { position: relative; z-index: 1; text-align: center; padding: 26px 0 6px 0; }
 .hhg-badge {
-    display: inline-block; padding: 4px 14px; border-radius: 999px;
-    background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35);
-    color: var(--gold); font-family: 'JetBrains Mono', monospace; font-size: 12px;
-    letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px;
+    display: inline-block; padding: 5px 16px; border-radius: 999px;
+    background: var(--yellow); border: 2px solid var(--forest-deep);
+    color: var(--forest-deep); font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px;
+    box-shadow: 3px 3px 0 var(--pink);
 }
 .hhg-title {
-    font-size: 44px; font-weight: 700; margin: 0; line-height: 1.1;
-    background: linear-gradient(90deg, var(--sand) 20%, var(--teal) 60%, var(--gold) 100%);
+    font-size: 46px; font-weight: 700; margin: 0; line-height: 1.1;
+    background: linear-gradient(90deg, var(--forest) 15%, var(--pink) 55%, var(--yellow-deep) 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 .hhg-tagline {
     font-family: 'JetBrains Mono', monospace; color: var(--dim); font-size: 13px;
-    letter-spacing: 0.5px; margin-top: 8px;
+    letter-spacing: 0.5px; margin-top: 10px;
 }
 
-/* ---------- glass cards ---------- */
+/* ---------- cards ---------- */
 .hhg-card {
     position: relative; z-index: 1;
-    background: var(--bg-glass); backdrop-filter: blur(10px);
-    border: 1px solid var(--border); border-radius: 14px;
+    background: var(--card);
+    border: 2px solid var(--forest); border-radius: 14px;
     padding: 18px 20px; margin-bottom: 12px;
+    box-shadow: 4px 4px 0 rgba(20, 83, 45, 0.12);
 }
 
 /* ---------- stage tracker ---------- */
 .stage-row {
     display: flex; align-items: center; gap: 12px;
-    background: var(--bg-glass); backdrop-filter: blur(10px);
-    border: 1px solid var(--border); border-left: 3px solid var(--pending);
+    background: var(--card);
+    border: 2px solid var(--pending); border-left: 5px solid var(--pending);
     border-radius: 10px; padding: 12px 16px; margin-bottom: 8px;
     transition: all 0.35s ease;
 }
-.stage-row.pending { opacity: 0.55; }
+.stage-row.pending { opacity: 0.6; }
 .stage-row.active {
-    border-left-color: var(--gold);
-    box-shadow: 0 0 18px rgba(245,158,11,0.18);
+    border-color: var(--yellow-deep); border-left-color: var(--yellow-deep);
+    box-shadow: 0 0 0 3px rgba(245,197,24,0.25);
     animation: pulse-glow 1.4s infinite ease-in-out;
 }
-.stage-row.success { border-left-color: var(--teal); }
-.stage-row.failed { border-left-color: var(--fail); }
+.stage-row.success { border-color: var(--forest); border-left-color: var(--forest); }
+.stage-row.failed { border-color: var(--fail); border-left-color: var(--fail); }
 
 @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 10px rgba(245,158,11,0.12); }
-    50% { box-shadow: 0 0 22px rgba(245,158,11,0.30); }
+    0%, 100% { box-shadow: 0 0 0 2px rgba(245,197,24,0.18); }
+    50% { box-shadow: 0 0 0 6px rgba(245,197,24,0.32); }
 }
 
 .stage-icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
 .stage-text { flex-grow: 1; }
-.stage-name { font-weight: 600; font-size: 14px; color: var(--sand); }
+.stage-name { font-weight: 700; font-size: 14px; color: var(--forest-deep); }
 .stage-msg { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--dim); margin-top: 2px; }
 
 /* ---------- badges / pills ---------- */
 .hhg-pill {
     display: inline-block; padding: 3px 10px; border-radius: 999px;
-    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
 }
-.pill-teal { background: rgba(20,184,166,0.15); color: var(--teal); border: 1px solid rgba(20,184,166,0.4); }
-.pill-gold { background: rgba(245,158,11,0.15); color: var(--gold); border: 1px solid rgba(245,158,11,0.4); }
-.pill-fail { background: rgba(248,113,113,0.15); color: var(--fail); border: 1px solid rgba(248,113,113,0.4); }
+.pill-teal { background: var(--forest); color: var(--cream); border: 1px solid var(--forest-deep); }
+.pill-gold { background: var(--yellow); color: var(--forest-deep); border: 1px solid var(--yellow-deep); }
+.pill-fail { background: rgba(214,51,108,0.12); color: var(--fail); border: 1px solid rgba(214,51,108,0.4); }
 
 .hhg-mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--dim); word-break: break-all; }
-a.hhg-link { color: var(--teal); text-decoration: none; border-bottom: 1px dashed rgba(20,184,166,0.5); }
-a.hhg-link:hover { color: var(--gold); }
+a.hhg-link { color: var(--pink-deep); text-decoration: none; border-bottom: 1px dashed rgba(224,68,127,0.5); }
+a.hhg-link:hover { color: var(--forest); }
 
 /* ---------- streamlit widget overrides ---------- */
 [data-testid="stFileUploaderDropzone"] {
-    background: var(--bg-glass) !important; border: 1.5px dashed rgba(20,184,166,0.4) !important;
+    background: var(--cream-deep) !important; border: 2px dashed var(--pink) !important;
     border-radius: 14px !important;
 }
-[data-testid="stFileUploaderDropzone"]:hover { border-color: var(--gold) !important; }
+[data-testid="stFileUploaderDropzone"]:hover { border-color: var(--forest) !important; }
+[data-testid="stFileUploaderDropzone"] * { color: var(--text) !important; }
+[data-testid="stFileUploaderDropzone"] button {
+    background: var(--forest) !important; color: #FFFFFF !important;
+    border: 2px solid var(--forest-deep) !important; border-radius: 8px !important;
+    box-shadow: 2px 2px 0 var(--pink) !important;
+}
+[data-testid="stFileUploaderDropzone"] button * { color: #FFFFFF !important; }
+[data-testid="stFileUploaderDropzone"] button:hover { background: var(--forest-deep) !important; }
 
 .stButton > button, .stDownloadButton > button {
-    background: linear-gradient(90deg, var(--teal), #0d9488) !important;
-    color: #06231f !important; font-weight: 700 !important; border: none !important;
+    background: linear-gradient(90deg, var(--pink), var(--pink-deep)) !important;
+    color: #FFFFFF !important; font-weight: 700 !important; border: 2px solid var(--forest-deep) !important;
     border-radius: 10px !important; padding: 10px 22px !important;
-    transition: all 0.25s ease !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 3px 3px 0 var(--forest) !important;
 }
 .stButton > button:hover, .stDownloadButton > button:hover {
-    box-shadow: 0 0 18px rgba(20,184,166,0.5) !important; transform: translateY(-1px);
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 var(--forest) !important;
+}
+.stButton > button:disabled {
+    background: var(--pending) !important; color: #fff !important;
+    box-shadow: 3px 3px 0 rgba(20,83,45,0.15) !important; border-color: var(--pending) !important;
 }
 
 [data-testid="stStatusWidget"], .stAlert { border-radius: 10px !important; }
 
-h1, h2, h3 { font-family: 'Space Grotesk', sans-serif !important; color: var(--sand) !important; }
-p, span, label, .stMarkdown { color: var(--sand); }
+h1, h2, h3, h4, h5 { font-family: 'Space Grotesk', sans-serif !important; color: var(--forest-deep) !important; }
+p, span, label, .stMarkdown, div { color: var(--text); }
 
 hr { border-color: var(--border) !important; }

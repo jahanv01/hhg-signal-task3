@@ -35,11 +35,12 @@ def inject_theme():
 
     st.markdown(
         """
+        <div class="hhg-roofline"></div>
         <div class="hhg-floaters">
             <div class="floater floater-1">🌴</div>
-            <div class="floater floater-2">🌊</div>
-            <div class="floater floater-3">⛵</div>
-            <div class="floater floater-4">🌅</div>
+            <div class="floater floater-2">🌺</div>
+            <div class="floater floater-3">🌴</div>
+            <div class="floater floater-4">🌺</div>
             <div class="floater floater-5">🧭</div>
             <div class="floater floater-6">✨</div>
         </div>
@@ -55,7 +56,7 @@ def render_header():
         <div class="hhg-header">
             <span class="hhg-badge">HH GOA 2026 · SIGNAL TASK 3</span>
             <h1 class="hhg-title">FACE → SEARCH → CHAIN</h1>
-            <div class="hhg-tagline">Less Noise. More Signal. — face identification, genuine web search,
+            <div class="hhg-tagline">Less Noise. More Signal. face identification, genuine web search,
             and tamper-evident blockchain verification, live.</div>
         </div>
         """,
