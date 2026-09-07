@@ -1,6 +1,6 @@
-# HH Signal — Face Identification & Blockchain Verification — Team:HackWave
+# HH Signal — Face Identification & Blockchain Verification 
 
-Built for **HH Goa 2026, Shortlisting Task 3**.
+Built for **HH Goa 2026, Shortlisting Task 3** (Submitted by HackWave Team).
 
 A pipeline that takes a face scan, finds a genuinely matching social media
 post via a real reverse-image search, and writes a tamper-evident record of
