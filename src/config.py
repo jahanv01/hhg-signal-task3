@@ -9,7 +9,7 @@ load_dotenv()
 SERPAPI_API_KEY = os.getenv("SERPAPI_API_KEY", "")
 
 # --- Polygon Amoy testnet ---
-AMOY_RPC_URL = os.getenv("AMOY_RPC_URL", "https://rpc-amoy.polygon.technology")
+AMOY_RPC_URL = os.getenv("AMOY_RPC_URL", "https://polygon-amoy-bor-rpc.publicnode.com")
 AMOY_CHAIN_ID = 80002
 WALLET_PRIVATE_KEY = os.getenv("WALLET_PRIVATE_KEY", "")
 WALLET_ADDRESS = os.getenv("WALLET_ADDRESS", "")
